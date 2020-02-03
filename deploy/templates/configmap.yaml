@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.application.name }}-configmap
+  namespace: {{ .Values.application.namespace }}
+data:
+  POSTGRES_DB: {{ .Values.postgres.access.db }}
+  POSTGRES_USER: {{ .Values.postgres.access.user }}
+  POSTGRES_PASSWORD: {{ .Values.postgres.access.password }}

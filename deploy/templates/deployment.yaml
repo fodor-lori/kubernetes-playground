@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgres.name }}-deployment
+  namespace: {{ .Values.application.namespace }}
+  labels:
+    app: {{ .Values.postgres.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.postgres.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postgres.name }}
+    spec:
+      containers:
+        - name: {{ .Values.postgres.image.name }}
+          image: {{ .Values.postgres.image.image }}
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: {{ .Values.postgres.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.application.name }}-configmap
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgres.name }}-volume-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backend.name }}-deployment
+  namespace: {{ .Values.application.namespace }}
+  labels:
+    app: {{ .Values.backend.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.backend.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.backend.name }}
+    spec:
+      containers:
+        - name: {{ .Values.backend.name }}
+          image: {{ .Values.backend.image.image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.backend.port }}
+          env:
+            - name: POSTGRES_HOST
+              value: {{ .Values.postgres.name }}-service
+            - name: POSTGRES_PORT
+              value: "{{ .Values.postgres.port }}"
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.application.name }}-configmap
+          volumeMounts:
+            - mountPath: /usr/src/app/backend
+              name: backend-logs
+      volumes:
+        - name: backend-logs
+          persistentVolumeClaim:
+            claimName: {{ .Values.logs.name }}-volume-claim
+      imagePullSecrets:
+        - name: app-docker-cred

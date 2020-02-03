@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.postgres.name }}-persistent-volume
+  namespace: {{ .Values.application.namespace }}
+  labels:
+    type: local
+    app: {{ .Values.postgres.name }}
+spec:
+  storageClassName: postgres
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.postgres.name }}-volume-claim
+  namespace: {{ .Values.application.namespace }}
+  labels:
+    app: {{ .Values.postgres.name }}
+spec:
+  storageClassName: postgres
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.postgres.capacity }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.logs.name }}-persistent-volume
+  namespace: {{ .Values.application.namespace }}
+  labels:
+    type: local
+    app: {{ .Values.logs.name }}
+spec:
+  storageClassName: logs
+  capacity:
+    storage: 50Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/opt/logs"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.logs.name }}-volume-claim
+  namespace: {{ .Values.application.namespace }}
+  labels:
+    app: {{ .Values.logs.name }}
+spec:
+  storageClassName: logs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.logs.capacity }}

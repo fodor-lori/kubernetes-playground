@@ -1,0 +1,23 @@
+application:
+  name: kubernetes-learning
+  namespace: testing
+postgres:
+  name: backend-postgres
+  port: 5432
+  capacity: 250Mi
+  image:
+    name: postgres
+    image: postgres:10.4
+  access:
+    db: postgres
+    user: postgres
+    password: admin123
+backend:
+  name: backend
+  port: 80
+  image:
+    name: backend
+    image: fodorlorant/test-repository:latest
+logs:
+  name: backend-logs
+  capacity: 25Mi

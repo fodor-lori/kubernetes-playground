@@ -1,0 +1,19 @@
+{
+  "name": "kubernetes-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js.js",
+  "scripts": {
+    "dev": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^7.18.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.21.3",
+    "winston": "^3.2.1"
+  }
+}
